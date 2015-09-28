@@ -13,7 +13,23 @@ done
 
 dialog --yesno "Bist du ein FHEM Fan?" 15 60
 
+# fhem installieren
+sudo apt-get update && apt-get -y upgrade
+sudo apt-get install apt-transport-https
+sudo apt-get install -f
 echo "myfhem installer"
+
+sudo wget -qO - https://debian.fhem.de/archive.key | apt-key add -
+sudo deb https://debian.fhem.de/stable ./ sudo apt-get update
+sudo apt-get install -y fhem
+
+# Zeitserver
+sudo apt-get install -y ntpdate
+sudo ntpdate -u de.pool.ntp.org
+
+# Perl JSON
+apt-get install -y libjson-perl
+
 
 #Begrüßung
 # read -p „bitte den Namen eingeben:“ name
