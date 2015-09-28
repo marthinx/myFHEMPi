@@ -27,9 +27,13 @@ sudo apt-get install -y fhem
 sudo apt-get install -y ntpdate
 sudo ntpdate -u de.pool.ntp.org
 
-# Perl JSON
-apt-get install -y libjson-perl
-
+# Zusatzmodule z.B. Perl JSON
+sudo apt-get install -y libjson-perl
+sudo apt-get install -y samba cifs-utils
+sudo apt-get install -y sendEmail
+sudo apt-get install -y etherwake
+sudo apt-get install -y libnet-telnet-perl
+sudo apt-get install -y socat
 
 #Begrüßung
 # read -p „bitte den Namen eingeben:“ name
