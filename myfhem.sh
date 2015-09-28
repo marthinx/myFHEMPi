@@ -62,3 +62,5 @@ cd knxd
 dpkg-buildpackage -b -uc
 cd ..
 sudo dpkg -i knxd_*.deb knxd-tools_*.deb
+
+sudo cp fhem.cfg /opt/fhem/fhem.cfg
