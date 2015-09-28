@@ -1,5 +1,57 @@
 #!/bin/bash
+
+# -----------------------------------------------------------------------
+# Installs myFHEM using pthsem_2.0.8 on the Raspberry Pi (Raspbian)
+#
+# Run from the web:
+#   bash <(curl -s raw_script_url_here)
+# -----------------------------------------------------------------------
+
+# Set up variables
+bold="\033[1m"
+normal="\033[0m"
+
+# Welcome message
+echo -e "\n${bold}This will install myFHEM using pthsem_2.0.8."
+echo -e "It can take about 20 minutes to compile on the Raspberry Pi.${normal}"
+
+# Prompt to continue
+read -p "  Continue? (y/n) " ans
+if [[ $ans != "y" ]]; then
+  echo -e "\nQuitting...\n"
+  exit
+fi
+echo
+
+# Time the install process
+START_TIME=$SECONDS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #myfhem installer
+
+
+
+
+
+
+
+
 
 while [ "$1" != '' ]
   do
