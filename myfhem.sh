@@ -22,13 +22,7 @@ if [[ $ans != "y" ]]; then
   exit
 fi
 echo
-# Zeitsync: Ntp-Systemdienst installieren
-# siehe http://www.meintechblog.de/2015/06/ungenaue-fhem-systemzeit-berichtigen-und-uhrzeit-angelernter-geraete-updaten/
-sudo apt-get install ntp
-ntpd -q -g
 
-# neuer String:
-# sed -e "s/alterString/neuer String/g" /etc/ntp.conf > /etc/ntp.conf_neu
 
 
 # Time the install process
@@ -61,8 +55,20 @@ sudo deb https://debian.fhem.de/stable ./ sudo apt-get update
 sudo apt-get install -y fhem
 
 # Zeitserver
+# Zeitsync: Ntp-Systemdienst installieren
+# siehe http://www.meintechblog.de/2015/06/ungenaue-fhem-systemzeit-berichtigen-und-uhrzeit-angelernter-geraete-updaten/
+
+
 sudo apt-get install -y ntpdate
 sudo ntpdate -u de.pool.ntp.org
+sudo ntpd -q -g 	
+# neuer String:
+# sed -e "s/alterString/neuer String/g" /etc/ntp.conf > /etc/ntp.conf_neu
+# sudo nano /etc/crontab
+cat <(crontab -l) <(echo "0 5     * * *   root    ntpd -q -g -x -n") | crontab -
+sudo service cron restart
+
+
 
 # Zusatzmodule z.B. Perl JSON
 sudo apt-get install -y libjson-perl
