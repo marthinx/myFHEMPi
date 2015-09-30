@@ -22,36 +22,21 @@ if [[ $ans != "y" ]]; then
   exit
 fi
 echo
+# Zeitsync: Ntp-Systemdienst installieren
+# siehe http://www.meintechblog.de/2015/06/ungenaue-fhem-systemzeit-berichtigen-und-uhrzeit-angelernter-geraete-updaten/
+sudo apt-get install ntp
+ntpd -q -g
+
+# neuer String:
+# sed -e "s/alterString/neuer String/g" /etc/ntp.conf > /etc/ntp.conf_neu
+
 
 # Time the install process
 START_TIME=$SECONDS
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #myfhem installer
-
-
-
-
-
-
-
-
 
 while [ "$1" != '' ]
   do
