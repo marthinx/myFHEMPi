@@ -175,7 +175,8 @@ do_checkout()  {
 do_checkin()  {
     git config --global user.name "Martin"
     git add fhem_config.sh
-    git commit -m 'Test'
+    read -p "Beschreibung der Anpassung: " anpassung
+    git commit -m $anpassung
     git push origin master
 }
 
