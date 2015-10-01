@@ -154,4 +154,14 @@ do_create_image() {
 	# create image
 }
 
+do_checkout_fhem_config()  {
+git clone https://github.com/marthinx/myFHEMPi.git
+chmod +x fhem_config.sh
+}
+
+do_checkin_fhem_config()  {
+git config --global user.name "Martin"
+git commit -m 'Test'
+}
+
 
