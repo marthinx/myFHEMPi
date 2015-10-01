@@ -44,7 +44,7 @@ do_show_menu() {
     # Bash Menu Script Example
 
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "install myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -55,20 +55,29 @@ do_show_menu() {
             do_install_fhem
             ;;
         "timesync")
-            echo "you chose choice 3"
+            echo "you chose timesync"
             do_timesync
             ;;
         "addons")
-            echo "you chose choice 3"
+            echo "you chose addons"
             do_install_addons
             ;;
         "checkout")
-            echo "you chose choice 3"
+            echo "you chose checkout"
             do_checkout
             ;;
         "checkin")
-            echo "you chose choice 3"
+            echo "you chose checkin"
             do_checkin
+            ;;
+        "install myFHEM"
+            echo "you chose checkin"
+            do_apt-get_update
+            do_timesync
+            do_install_addons
+            do_install_fhem
+            do_move_fhem_cfg
+            # do_install_knxd
             ;;
         "Quit")
             break
@@ -158,11 +167,6 @@ do_create_image() {
     echo "Image wird erstellt"
 }
 
-
-do_update_fhem_config()  {
-    git clone https://github.com/marthinx/myFHEMPi.git
-    chmod +x fhem_config.sh
-}
 
 do_checkout()  {
     git clone https://github.com/marthinx/myFHEMPi.git
