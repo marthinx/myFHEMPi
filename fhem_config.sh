@@ -44,7 +44,7 @@ do_show_menu() {
     # Bash Menu Script Example
 
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "install myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -70,8 +70,8 @@ do_show_menu() {
             echo "you chose checkin"
             do_checkin
             ;;
-        "install myFHEM"
-            echo "you chose checkin"
+        "install_myFHEM")
+            echo "you chose myFHEM"
             do_apt-get_update
             do_timesync
             do_install_addons
@@ -155,8 +155,7 @@ do_install_knxd() {
     cd ..
     sudo dpkg -i knxd_*.deb knxd-tools_*.deb
 }
-
-
+_
 do_move_fhem_cfg() {
     sudo cp fhem.cfg /opt/fhem/fhem.cfg
 }
