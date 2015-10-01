@@ -44,7 +44,7 @@ do_show_menu() {
     # Bash Menu Script Example
 
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -61,6 +61,14 @@ do_show_menu() {
         "addons")
             echo "you chose choice 3"
             do_install_addons
+            ;;
+        "checkout")
+            echo "you chose choice 3"
+            do_checkout
+            ;;
+        "checkin")
+            echo "you chose choice 3"
+            do_checkin
             ;;
         "Quit")
             break
@@ -156,28 +164,17 @@ do_update_fhem_config()  {
     chmod +x fhem_config.sh
 }
 
-do_checkout_fhem_config()  {
+do_checkout()  {
     git clone https://github.com/marthinx/myFHEMPi.git
     chmod +x fhem_config.sh
 }
 
-<<<<<<< HEAD
-do_checkout_fhem_config()  {
-git clone https://github.com/marthinx/myFHEMPi.git
-chmod +x fhem_config.sh
-}
-
-do_checkin_fhem_config()  {
-git config --global user.name "Martin"
-git commit -m 'Test'
-}
-
-=======
-do_checkin_fhem_config()  {
+do_checkin()  {
     git config --global user.name "Martin"
-    git commit -m 'First commit'
+    git add fhem_config.sh
+    git commit -m 'Test'
+    git push origin master
 }
->>>>>>> 1ab08857652769dc7a833e167b5c01fb12e30934
 
 do_check_arguments
 do_init
