@@ -138,6 +138,12 @@ do_timesync() {
     # sudo nano /etc/crontab
     cat <(crontab -l) <(echo "0 5     * * *   root    ntpd -q -g -x -n") | crontab -
     sudo service cron restart
+    # Zeitzone einstellen
+    # dpkg-reconfigure tzdata
+    TIMEZONE="Europe/Berlin"      
+    echo $TIMEZONE > /etc/timezone                     
+    cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
+    
 }
 
 do_install_addons() {
