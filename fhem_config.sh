@@ -146,6 +146,12 @@ do_timesync() {
     
 }
 
+do_setIP() {
+    sudo ifconfig eth0 down
+    sudo ifconfig eth0 192.168.188.10
+    sudo ifconfig eth0 up
+}
+
 do_install_addons() {
     # Zusatzmodule z.B. Perl JSON
     sudo apt-get install -y libjson-perl
