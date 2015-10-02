@@ -87,6 +87,24 @@ do_show_menu() {
     done
 }
 
+do_internationalisation_menu() {
+  FUN=$(whiptail --title "Raspberry Pi Software Configuration Tool (raspi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "I1 Change Locale" "Set up language and regional settings to match your location" \
+    "I2 Change Timezone" "Set up timezone to match your location" \
+    "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      I1\ *) do_change_locale ;;
+      I2\ *) do_change_timezone ;;
+      I3\ *) do_configure_keyboard ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
 
 do_apt-get_update() {
     sudo -y apt-get update
