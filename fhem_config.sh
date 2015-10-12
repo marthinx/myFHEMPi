@@ -62,6 +62,14 @@ do_show_menu() {
             echo "you chose addons"
             do_install_addons
             ;;
+        "Stromzaehler")
+            echo "you chose Stromzaehler"
+            do_installStromzahler
+            ;;
+        "Gaszaehler")
+            echo "you chose Gaszaehler"
+            do_installGaszahler
+            ;;
         "checkout")
             echo "you chose checkout"
             do_checkout
@@ -162,6 +170,17 @@ do_install_addons() {
     sudo apt-get install -y socat
     sudo apt-get install -y debhelper cdbs automake libtool libusb-1.0-0-dev git-core build-essential
 }
+
+do_installStromzahler() {
+    # in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600
+    cat /dev/ttyUSB0
+}
+
+do_installGaszahler() {
+    # in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600
+    cat /dev/ttyUSB0
+}
+
 
 do_move_fhem_cfg() {
     sudo cp fhem.cfg /opt/fhem/fhem.cfg
