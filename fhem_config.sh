@@ -69,6 +69,15 @@ do_show_menu() {
         "Gaszaehler")
             echo "you chose Gaszaehler"
             do_installGaszahler
+            echo "define GasverbrauchStdNoti notify Gasverbrauch {"
+            echo "my $GasUmlaufzeit=ReadingsVal("Gasverbrauch","pauseTimeEdge","0")+ReadingsVal("Gasverbrauch","pulseTimeEdge","0"); "
+            echo "my $GasProStd=36/$GasUmlaufzeit; ";
+            echo "my $GasProStdRounded=int(100 * $GasProStd + 0.5) / 100; "
+
+            echo "fhem("set GasverbrauchStd $GasProStdRounded");; "
+            echo "fhem("delete tmp_time_gas");; "
+            echo "fhem("define tmp_time_gas at +00:02:00 set GasverbrauchStd 0");; "
+            echo "}"
             ;;
         "checkout")
             echo "you chose checkout"
