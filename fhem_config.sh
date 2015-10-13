@@ -79,6 +79,53 @@ do_show_menu() {
             echo "fhem("define tmp_time_gas at +00:02:00 set GasverbrauchStd 0");; "
             echo "}"
             ;;
+        "Homebridge")
+            sudo apt-get update
+            sudo apt-get upgrade
+            sudo apt-get install build-essential libssl-dev
+            
+            # aus package.json entfernt werden: 
+            # "harmonyhubjs-client": "^1.1.4",
+            # "harmonyhubjs-discover": "git+https://github.com/swissmanu/harmonyhubjs-discover.git"
+            
+            # Python, g++, MDNS installieren
+            sudo apt-get install python
+            sudo apt-get install g++
+            sudo apt-get install libavahi-compat-libdnssd-dev
+            
+            #homebridge installieren
+            git clone https://github.com/nfarina/homebridge.git
+            cd homebridge
+            npm install
+            
+            # homebridge konfigurieren
+            #nano config.json
+            
+            # homebridge starten
+            npm run start
+            
+            echo "IOS einrichten "
+            ;;
+        
+        
+        "Enocean")
+            echo "define TCM_ESP3_0 TCM ESP3 /dev/ttyAMA0@57600"
+            ;;
+        
+        "Scipt_Automatik")
+            echo "define Gast_Automatik dummy"
+            echo "attr Gast_Automatik devStateIcon ja:general_an_fuer_zeit nein:general_aus_fuer_zeit"
+            echo "attr Gast_Automatik eventMap ja nein"
+            echo "attr Gast_Automatik webCmd ja:nein"
+
+            echo "define Gast_Jal_auf at *{sunrise(0,"05:00","08:00")} {"
+            echo "my $OG = Value("Gast_Automatik");;"
+            echo "if ( $OG eq "ja" )"
+ 	            echo "{fhem ("set Gast_Jal on")}"
+            echo "}"
+            ;;
+            
+        
         "checkout")
             echo "you chose checkout"
             do_checkout
