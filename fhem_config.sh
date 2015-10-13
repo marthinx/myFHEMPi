@@ -80,36 +80,13 @@ do_show_menu() {
             echo "}"
             ;;
         "Homebridge")
-            sudo apt-get update
-            sudo apt-get upgrade
-            sudo apt-get install build-essential libssl-dev
-            
-            # aus package.json entfernt werden: 
-            # "harmonyhubjs-client": "^1.1.4",
-            # "harmonyhubjs-discover": "git+https://github.com/swissmanu/harmonyhubjs-discover.git"
-            
-            # Python, g++, MDNS installieren
-            sudo apt-get install python
-            sudo apt-get install g++
-            sudo apt-get install libavahi-compat-libdnssd-dev
-            
-            #homebridge installieren
-            git clone https://github.com/nfarina/homebridge.git
-            cd homebridge
-            npm install
-            
-            # homebridge konfigurieren
-            #nano config.json
-            
-            # homebridge starten
-            npm run start
-            
-            echo "IOS einrichten "
+            echo "you chose Homebridge"
+            do_installHomebridger
             ;;
         
-        
-        "Enocean")
-            echo "define TCM_ESP3_0 TCM ESP3 /dev/ttyAMA0@57600"
+        "EnOcean")
+            echo "you chose EnOcean"
+            do_installEnOcean
             ;;
         
         "Scipt_Automatik")
@@ -152,22 +129,22 @@ do_show_menu() {
 }
 
 do_internationalisation_menu() {
-  FUN=$(whiptail --title "Raspberry Pi Software Configuration Tool (raspi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "I1 Change Locale" "Set up language and regional settings to match your location" \
-    "I2 Change Timezone" "Set up timezone to match your location" \
-    "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
-    3>&1 1>&2 2>&3)
-  RET=$?
-  if [ $RET -eq 1 ]; then
-    return 0
-  elif [ $RET -eq 0 ]; then
-    case "$FUN" in
-      I1\ *) do_change_locale ;;
-      I2\ *) do_change_timezone ;;
-      I3\ *) do_configure_keyboard ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    FUN=$(whiptail --title "Raspberry Pi Software Configuration Tool (raspi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+        "I1 Change Locale" "Set up language and regional settings to match your location" \
+        "I2 Change Timezone" "Set up timezone to match your location" \
+        "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
+        3>&1 1>&2 2>&3)
+    RET=$?
+    if [ $RET -eq 1 ]; then
+        return 0
+    elif [ $RET -eq 0 ]; then
+        case "$FUN" in
+        I1\ *) do_change_locale ;;
+        I2\ *) do_change_timezone ;;
+        I3\ *) do_configure_keyboard ;;
+        *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
-  fi
+    fi
 }
 
 do_apt-get_update() {
@@ -237,6 +214,37 @@ do_installGaszahler() {
     cat /dev/ttyUSB0
 }
 
+do_installHomebridge() {
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo apt-get install build-essential libssl-dev
+        
+    # aus package.json entfernt werden: 
+    # "harmonyhubjs-client": "^1.1.4",
+    # "harmonyhubjs-discover": "git+https://github.com/swissmanu/harmonyhubjs-discover.git"
+            
+    # Python, g++, MDNS installieren
+    sudo apt-get install python
+    sudo apt-get install g++
+    sudo apt-get install libavahi-compat-libdnssd-dev
+            
+    #homebridge installieren
+    git clone https://github.com/nfarina/homebridge.git
+    cd homebridge
+    npm install
+            
+    # homebridge konfigurieren
+    #nano config.json
+            
+    # homebridge starten
+    npm run start
+            
+    echo "nun IOS einrichten "
+}
+
+do_installEnOcean() {
+    echo "define TCM_ESP3_0 TCM ESP3 /dev/ttyAMA0@57600"       
+}
 
 do_move_fhem_cfg() {
     sudo cp fhem.cfg /opt/fhem/fhem.cfg
