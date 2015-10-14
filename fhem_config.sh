@@ -62,6 +62,10 @@ do_show_menu() {
             echo "you chose addons"
             do_install_addons
             ;;
+        "feste IP")
+            echo "you chose feste IP"
+            do_setIP
+            ;;
         "Stromzaehler")
             echo "you chose Stromzaehler"
             do_installStromzahler
@@ -101,7 +105,13 @@ do_show_menu() {
  	            echo "{fhem ("set Gast_Jal on")}"
             echo "}"
             ;;
-            
+        
+        "Tastaturlayout")
+            echo "you chose do_internationalisation_menu"
+            do_internationalisation_menu
+            ;;
+        
+        
         
         "checkout")
             echo "you chose checkout"
@@ -191,6 +201,7 @@ do_setIP() {
     sudo ifconfig eth0 down
     sudo ifconfig eth0 192.168.188.10
     sudo ifconfig eth0 up
+    echo "http://www.elektronik-kompendium.de/sites/raspberry-pi/1912151.htm"
 }
 
 do_install_addons() {
