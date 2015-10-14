@@ -46,7 +46,7 @@ do_show_menu() {
     echo "Wilkommen zur FHEM_Config" 
     echo ""
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "FHEM Scipte" "smartVISU" "Backup FHEM" "move_fhem_cfg" "Checkin" "checkout" "install_myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "FHEM Scipte“ "smartVISU" "Backup FHEM" "move_fhem_cfg" "Checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
