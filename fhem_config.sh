@@ -42,51 +42,52 @@ do_check_arguments() {
 
 do_show_menu() {
     # Bash Menu Script Example
-
+    echo ""
+    echo "Wilkommen zur FHEM_Config" 
+    echo ""
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "Scipt_Automatik" "smartVISU" "checkin" "checkout" "install_myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "FHEM Scipte" "smartVISU" "Backup FHEM" "move_fhem_cfg" "Checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
         "apt-get_update")
             do_apt-get_update
             ;;
+
         "install FHEM")
             do_install_fhem
             ;;
+
         "timesync")
             echo "you chose timesync"
             do_timesync
             ;;
+
         "addons")
             echo "you chose addons"
             do_install_addons
             ;;
+
         "feste IP")
             echo "you chose feste IP"
             do_setIP
             ;;
+
         "Tastaturlayout")
             echo "you chose do_internationalisation_menu"
             do_internationalisation_menu
             ;;
+
         "Stromzaehler")
             echo "you chose Stromzaehler"
             do_installStromzahler
             ;;
+
         "Gaszaehler")
             echo "you chose Gaszaehler"
             do_installGaszahler
-            echo "define GasverbrauchStdNoti notify Gasverbrauch {"
-            echo "my $GasUmlaufzeit=ReadingsVal("Gasverbrauch","pauseTimeEdge","0")+ReadingsVal("Gasverbrauch","pulseTimeEdge","0"); "
-            echo "my $GasProStd=36/$GasUmlaufzeit; ";
-            echo "my $GasProStdRounded=int(100 * $GasProStd + 0.5) / 100; "
-
-            echo "fhem("set GasverbrauchStd $GasProStdRounded");; "
-            echo "fhem("delete tmp_time_gas");; "
-            echo "fhem("define tmp_time_gas at +00:02:00 set GasverbrauchStd 0");; "
-            echo "}"
             ;;
+
         "Homebridge")
             echo "you chose Homebridge"
             do_installHomebridger
@@ -97,17 +98,9 @@ do_show_menu() {
             do_installEnOcean
             ;;
         
-        "Scipt_Automatik")
-            echo "define Gast_Automatik dummy"
-            echo "attr Gast_Automatik devStateIcon ja:general_an_fuer_zeit nein:general_aus_fuer_zeit"
-            echo "attr Gast_Automatik eventMap ja nein"
-            echo "attr Gast_Automatik webCmd ja:nein"
-
-            echo "define Gast_Jal_auf at *{sunrise(0,"05:00","08:00")} {"
-            echo "my $OG = Value("Gast_Automatik");;"
-            echo "if ( $OG eq "ja" )"
- 	            echo "{fhem ("set Gast_Jal on")}"
-            echo "}"
+        "FHEM Scipte“)
+            echo "you chose EnOcean"
+            do_FHEM_Scripte
             ;;
         
         "smartVISU")
@@ -115,15 +108,27 @@ do_show_menu() {
             do_install_smartVISU
             ;;
       
-        
-        "checkout")
-            echo "you chose checkout"
-            do_checkout
-            ;;
+        "Backup FHEM")
+            	echo "you chose Backup FHEM"
+            	do_checkout
+           	;;
+
+	"move_fhem_cfg")
+		echo "you chose Move them.cfg"
+		do_move_fhem_cfg
+		;;
+	
+       "checkout")
+            	echo "you chose checkout"
+            	do_checkout
+           	;;
+
+
         "checkin")
             echo "you chose checkin"
             do_checkin
             ;;
+
         "install_myFHEM")
             echo "you chose myFHEM"
             do_apt-get_update
@@ -219,97 +224,119 @@ do_install_addons() {
 }
 
 do_installStromzahler() {
-    # in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600
-    cat /dev/ttyUSB0
+    	# in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600
+    	cat /dev/ttyUSB0
 }
 
 do_installGaszahler() {
-    # in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600
-    cat /dev/ttyUSB0
+    	# in FHEM.cfg: define Stromzaehler SMLUSB /dev/ttyAMA0@9600    
+    	# cat /dev/ttyUSB0
+ 	echo "define GasverbrauchStdNoti notify Gasverbrauch {"
+       	echo "my $GasUmlaufzeit=ReadingsVal("Gasverbrauch","pauseTimeEdge","0")+ReadingsVal("Gasverbrauch","pulseTimeEdge","0"); "
+       	echo "my $GasProStd=36/$GasUmlaufzeit; ";
+       	echo "my $GasProStdRounded=int(100 * $GasProStd + 0.5) / 100; "
+
+       	echo "fhem("set GasverbrauchStd $GasProStdRounded");; "
+       	echo "fhem("delete tmp_time_gas");; "
+       	echo "fhem("define tmp_time_gas at +00:02:00 set GasverbrauchStd 0");; "
+       	echo "}"
+	lsusb
 }
 
 do_installHomebridge() {
-    sudo apt-get update
-    sudo apt-get upgrade
-    sudo apt-get install build-essential libssl-dev
+    	sudo apt-get update
+    	sudo apt-get upgrade
+ 	sudo apt-get install build-essential libssl-dev
         
-    # aus package.json entfernt werden: 
-    # "harmonyhubjs-client": "^1.1.4",
-    # "harmonyhubjs-discover": "git+https://github.com/swissmanu/harmonyhubjs-discover.git"
+	# aus package.json entfernt werden: 
+    	# "harmonyhubjs-client": "^1.1.4",
+    	# "harmonyhubjs-discover": "git+https://github.com/swissmanu/harmonyhubjs-discover.git"
             
-    # Python, g++, MDNS installieren
-    sudo apt-get install python
-    sudo apt-get install g++
-    sudo apt-get install libavahi-compat-libdnssd-dev
+    	# Python, g++, MDNS installieren
+    	sudo apt-get install python
+    	sudo apt-get install g++
+    	sudo apt-get install libavahi-compat-libdnssd-dev
             
-    #homebridge installieren
-    git clone https://github.com/nfarina/homebridge.git
-    cd homebridge
-    npm install
+    	#homebridge installieren
+    	git clone https://github.com/nfarina/homebridge.git
+    	cd homebridge
+    	npm install
             
-    # homebridge konfigurieren
-    #nano config.json
+    	# homebridge konfigurieren
+    	#nano config.json
             
-    # homebridge starten
-    npm run start
+    	# homebridge starten
+    	npm run start
             
-    echo "nun IOS einrichten "
+    	echo "nun IOS einrichten "
 }
 
 do_installEnOcean() {
-    echo "define TCM_ESP3_0 TCM ESP3 /dev/ttyAMA0@57600"       
+    	echo "define TCM_ESP3_0 TCM ESP3 /dev/ttyAMA0@57600"       
 }
 
 do_move_fhem_cfg() {
-    sudo cp fhem.cfg /opt/fhem/fhem.cfg
+    	sudo cp fhem.cfg /opt/fhem/fhem.cfg
 }
 
 
 do_install_knxd() {
-    # 1. lib pthsem herunterladen und installieren
-    wget https://www.auto.tuwien.ac.at/~mkoegler/pth/pthsem_2.0.8.tar.gz
-    tar xzf pthsem_2.0.8.tar.gz
-    cd pthsem-2.0.8
-    dpkg-buildpackage -b -uc
-    cd ..
-    sudo dpkg -i libpthsem*.deb
+    	# 1. lib pthsem herunterladen und installieren
+    	wget https://www.auto.tuwien.ac.at/~mkoegler/pth/pthsem_2.0.8.tar.gz
+    	tar xzf pthsem_2.0.8.tar.gz
+    	cd pthsem-2.0.8
+    	dpkg-buildpackage -b -uc
+    	cd ..
+    	sudo dpkg -i libpthsem*.deb
 
-    # 2. knxd herunterladen und installieren
-    echo "knxd herunterladen und installieren"
-    git clone https://github.com/knxd/knxd.git
-    cd knxd
-    dpkg-buildpackage -b -uc
-    cd ..
-    sudo dpkg -i knxd_*.deb knxd-tools_*.deb
+    	# 2. knxd herunterladen und installieren
+    	echo "knxd herunterladen und installieren"
+    	git clone https://github.com/knxd/knxd.git
+    	cd knxd
+    	dpkg-buildpackage -b -uc
+    	cd ..
+    	sudo dpkg -i knxd_*.deb knxd-tools_*.deb
 }
-_
+
 do_move_fhem_cfg() {
-    sudo cp fhem.cfg /opt/fhem/fhem.cfg
+    	sudo cp fhem.cfg /opt/fhem/fhem.cfg
 }
 
 
 do_create_image() {
-    # create image
-    echo "Image wird erstellt"
+    	# create image
+    	echo "Image wird erstellt"
 }
 
 
+do_FHEM_Scripte() {
+    	echo "define Gast_Automatik dummy"
+    	echo "attr Gast_Automatik devStateIcon ja:general_an_fuer_zeit nein:general_aus_fuer_zeit"
+    	echo "attr Gast_Automatik eventMap ja nein"
+    	echo "attr Gast_Automatik webCmd ja:nein"
+    	echo "define Gast_Jal_auf at *{sunrise(0,"05:00","08:00")} {"
+    	echo "my $OG = Value("Gast_Automatik");;"
+    	echo "if ( $OG eq "ja" )"
+    	echo "{fhem ("set Gast_Jal on")}"
+    	echo "}"
+}
+
 do_install_smartVISU() {
-    # create image
-    echo "smartVISU wird installiert"
+    	# create image
+    	echo "smartVISU wird installiert"
 }
 
 do_checkout()  {
-    git clone https://github.com/marthinx/myFHEMPi.git
-    chmod +x fhem_config.sh
+    	git clone https://github.com/marthinx/myFHEMPi.git
+    	chmod +x fhem_config.sh
 }
 
 do_checkin()  {
-    git config --global user.name "Martin"
-    git add fhem_config.sh
-    read -p "Beschreibung der Anpassung: " anpassung
-    git commit -m $anpassung
-    git push origin master
+    	git config --global user.name "Martin"
+    	git add fhem_config.sh
+    	read -p "Beschreibung der Anpassung: " anpassung
+    	git commit -m $anpassung
+    	git push origin master
 }
 
 do_check_arguments
