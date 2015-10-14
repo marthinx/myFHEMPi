@@ -44,7 +44,7 @@ do_show_menu() {
     # Bash Menu Script Example
 
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "checkin" "checkout" "install_myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "Scipt_Automatik" "smartVISU" "checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -65,6 +65,10 @@ do_show_menu() {
         "feste IP")
             echo "you chose feste IP"
             do_setIP
+            ;;
+        "Tastaturlayout")
+            echo "you chose do_internationalisation_menu"
+            do_internationalisation_menu
             ;;
         "Stromzaehler")
             echo "you chose Stromzaehler"
@@ -106,12 +110,11 @@ do_show_menu() {
             echo "}"
             ;;
         
-        "Tastaturlayout")
-            echo "you chose do_internationalisation_menu"
-            do_internationalisation_menu
+        "smartVISU")
+            echo "you chose smartVISU"
+            do_install_smartVISU
             ;;
-        
-        
+      
         
         "checkout")
             echo "you chose checkout"
@@ -290,6 +293,11 @@ do_create_image() {
     echo "Image wird erstellt"
 }
 
+
+do_install_smartVISU() {
+    # create image
+    echo "smartVISU wird installiert"
+}
 
 do_checkout()  {
     git clone https://github.com/marthinx/myFHEMPi.git
