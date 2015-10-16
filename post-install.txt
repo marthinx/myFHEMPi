@@ -1,0 +1,71 @@
+## Definitions
+# Root Partition
+export D_ROOT=/rootfs
+ 
+# Enable Power LED
+echo "Start configuring power led"
+echo "echo 1 > /sys/class/leds/led1/brightness" >> /etc/rc.local
+echo "echo input | sudo tee /sys/class/leds/led1/trigger" >> /etc/rc.local
+echo "echo mmc0 | sudo tee /sys/class/leds/led0/trigger" >> /etc/rc.local
+echo "End configuring power led"
+ 
+# Configure Timezone
+echo "Start configuring timezone"
+echo "Europe/Berlin" > $D_ROOT/etc/timezone
+chroot $D_ROOT dpkg-reconfigure -f noninteractive tzdata
+echo "End configuring timezone"
+ 
+# Configure Keyboard layout
+echo "Europe/Berlin" > $D_ROOT/etc/timezone
+echo "# KEYBOARD CONFIGURATION FILE" > $D_ROOT/etc/default/keyboard
+echo "# Consult the keyboard(5) manual page." > $D_ROOT/etc/default/keyboard
+echo 'XKBMODEL="pc105"' > $D_ROOT/etc/default/keyboard
+echo 'XKBLAYOUT="de"' > $D_ROOT/etc/default/keyboard
+echo 'XKBVARIANT="nodeadkeys"' > $D_ROOT/etc/default/keyboard
+echo 'XKBOPTIONS="terminate:ctrl_alt_bksp"' > $D_ROOT/etc/default/keyboard
+echo 'BACKSPACE="guess"' > $D_ROOT/etc/default/keyboard
+chroot $D_ROOT setupcon
+ 
+# Configure Locale
+echo "Start configuring locale"
+sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# nb_NO.UTF-8 UTF-8/nb_NO.UTF-8 UTF-8/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# de_DE ISO-8859-1/de_DE ISO-8859-1/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# de_DE@euro ISO-8859-15/de_DE@euro ISO-8859-15/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# en_US ISO-8859-1/en_US ISO-8859-1/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# en_US.ISO-8859-15 ISO-8859-15/en_US.ISO-8859-15 ISO-8859-15/' $D_ROOT/etc/locale.gen && \
+sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' $D_ROOT/etc/locale.gen && \
+echo 'LANG=en_US.UTF-8'> $D_ROOT/etc/default/locale && \
+chroot $D_ROOT dpkg-reconfigure --frontend=noninteractive locales && \
+chroot $D_ROOT update-locale LANG=en_US.UTF-8
+echo "End configuring locale"
+ 
+# Configure Swap
+echo "Start configuring swap"
+dd if=/dev/zero of=$D_ROOT/swap bs=1M count=512
+echo "/swap none swap sw 0 0" >> $D_ROOT/etc/fstab
+echo "End configuring swap"
+ 
+# Configure Random Number generator
+echo "Start configuring Random Number generator"
+echo "bcm2708-rng" >> $D_ROOT/etc/modules
+echo "End configuring Random Number generator"
+ 
+# Configure inittab
+echo "Start configuring inittab"
+sed -i 's/\(^.*T0.*$\)/#\ \1/' $D_ROOT/etc/inittab
+echo "End configuring inittab"
+ 
+# Configure fhem
+echo "Start configuring fhem"
+chroot $D_ROOT useradd -G dialout -g staff -M -s /bin/bash fhem
+export F_FHEMFILENAME=fhem-5.6
+mkdir -p $D_ROOT/opt/ && cd $D_ROOT/opt/ && wget http://fhem.de/$F_FHEMFILENAME.tar.gz && tar xzf $F_FHEMFILENAME.tar.gz && mv $F_FHEMFILENAME fhem && rm $F_FHEMFILENAME.tar.gz && chroot $D_ROOT "chown fhem:dialout -R /opt/fhem"
+echo "End configuring fhem"
+ 
+# Configure hmland
+echo "Start configuring hmland"
+mkdir -p $D_ROOT/opt/hmland
+chroot $D_ROOT "git clone git://git.zerfleddert.de/hmcfgusb /opt/hmland && cd /opt/hmland && make"
+echo "End configuring hmland"
