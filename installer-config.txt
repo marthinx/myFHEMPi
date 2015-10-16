@@ -1,4 +1,8 @@
 release=jessie
+
+# This is default, but here as a reminder.
+preset=server
+
 hostname=fhem
 rootpw=fhem
 cmdline="dwc_otg.lpm_enable=0 console=tty1 elevator=deadline"
