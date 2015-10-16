@@ -1,10 +1,10 @@
 release=jessie
-hostname=fhemtest
-rootpw=fhemtest
+hostname=fhem
+rootpw=fhem
 cmdline="dwc_otg.lpm_enable=0 console=tty1 elevator=deadline"
 packages=rpi-update,raspi-config,python-soappy,python-dateutil,python-pip,python-dev,build-essential,libtiff5-dev,zlib1g-dev,libfreetype6-dev,liblcms2-dev,libwebp-dev,tcl8.5-dev,tk8.5-dev python-tk,libjpeg-dev,raspi-copies-and-fills,rng-tools,nano,lsof,unzip,psmisc,apt-utils,avrdude,avr-libc,fonts-freefont-ttf,minicom,dfu-programmer,libsys-statistics-linux-perl,libjson-perl,libio-socket-ssl-perl,libgd-text-perl,libimage-librsvg-perl,imagemagick,sqlite3,libdevice-serialport-perl,libwww-perl,libxml-simple-perl,libdbi-perl,libnet-smtp-ssl-perl,libdbd-mysql,libdbd-sqlite,libdbd-sqlite3,libdbd-sqlite2-perl,libdbd-sqlite3-perl,libtext-diff-perl,diffutils,dos2unix,findutils,nano,screen,subversion,strace,bluez,bluez-tools,libnet-telnet-perl,e2fsprogs,dosfstools,git,cmake,libusb-1.0-0-dev,build-essential,console-data,console-setup,keyboard-configuration,libjson-xs-perl,libsoap-lite-perl
-ip_addr=dhcp
-ip_netmask=0.0.0.0
-ip_broadcast=0.0.0.0
-ip_gateway=0.0.0.0
-ip_nameservers=
+ip_addr=static
+ip_netmask=192.168.188.10
+ip_broadcast=192.168.188.1
+ip_gateway=192.168.188.1
+ip_nameservers=192.168.188.1
