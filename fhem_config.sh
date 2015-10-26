@@ -46,7 +46,7 @@ do_show_menu() {
     echo "Wilkommen zur FHEM_Config" 
     echo ""
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Homebridge" "EnOcean" "FHEM Scipte“ "smartVISU" "Backup FHEM" "move_fhem_cfg" "Checkin" "checkout" "install_myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "timesync" "addons" "feste IP" "Tastaturlayout" "Stromzaehler" "Gaszaehler" "Siri" "Homebridge" "EnOcean" "FHEM Scipte“ "smartVISU" "Backup FHEM" "move_fhem_cfg" "Checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -88,6 +88,11 @@ do_show_menu() {
             do_installGaszahler
             ;;
 
+        "Siri")
+            echo "you chose Siri"
+            do_installSiri()
+            ;;
+
         "Homebridge")
             echo "you chose Homebridge"
             do_installHomebridger
@@ -98,7 +103,7 @@ do_show_menu() {
             do_installEnOcean
             ;;
         
-        "FHEM Scipte“)
+        "FHEM Scipte")
             echo "you chose EnOcean"
             do_FHEM_Scripte
             ;;
@@ -313,6 +318,21 @@ do_installGaszahler() {
        	echo "}"
 	lsusb
 }
+
+do_installSiri() {
+	sudo apt-get update && sudo apt-get -y install libavahi-compat-libdnssd-dev
+	wget http://nodejs.org/dist/v0.10.28/node-v0.10.28-linux-arm-pi.tar.gz -P /tmp && cd /usr/local && sudo tar xzvf /tmp/node-v0.10.28-linux-arm-pi.tar.gz --strip=1
+	echo /usr/bin/env node --version
+	echo "=v0,10,28?"
+	cd /home/pi && git clone https://github.com/nfarina/homebridge.git && cd homebridge && sudo npm install
+	echo "sudo nano ~/homebridge/config.json eingeben"
+	sudo npm install forever -g	 
+	sudo chmod 755 /etc/init.d/homebridge
+	sudo update-rc.d homebridge defaults
+	echo "nun Homekit auf iOS installieren z.B. elgato eve"
+	echo "Pin lautet standardmässig: 031-45-154"
+}
+
 
 do_installHomebridge() {
     	sudo apt-get update
