@@ -90,7 +90,7 @@ do_show_menu() {
 
         "Siri")
             echo "you chose Siri"
-            do_installSiri()
+            do_installSiri
             ;;
 
         "Homebridge")
