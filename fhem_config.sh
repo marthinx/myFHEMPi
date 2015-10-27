@@ -324,12 +324,44 @@ do_installGaszahler() {
 }
 
 do_installSiri() {
+	echo "~ Die Homebridge wird nun installiert und konfiguriert"
 	sudo apt-get update && sudo apt-get -y install libavahi-compat-libdnssd-dev
 	wget http://nodejs.org/dist/v0.10.28/node-v0.10.28-linux-arm-pi.tar.gz -P /tmp && cd /usr/local && sudo tar xzvf /tmp/node-v0.10.28-linux-arm-pi.tar.gz --strip=1
 	echo /usr/bin/env node --version
 	echo "=v0,10,28?"
 	cd /home/pi && git clone https://github.com/nfarina/homebridge.git && cd homebridge && sudo npm install
 	echo "sudo nano ~/homebridge/config.json eingeben"
+	
+	
+ apt-get install lighttpd
+ cp ~/homebridge/config.json ~/homebridge/config.json.backup
+ rm -f ~/homebridge/config.json
+ touch ~/homebridge/config.json
+ echo '{
+"bridge": {
+"name": "Homebridge",
+"username": "CC:22:3D:E3:CE:30",
+"port": 51826,
+"pin": "031-45-154"
+},
+ 
+"platforms": [
+{
+"platform": "FHEM",
+"name": "FHEM",
+"server": "127.0.0.1",
+"port": "8083",
+"filter": "room=Homekit",
+"auth": {"user": "FHEMUser", "pass": "FHEMPass"}
+}
+],
+ 
+"accessories": []
+}
+
+' >> ~/homebridge/config.json
+ sleep 1
+	
 	sudo npm install forever -g	 
 	sudo chmod 755 /etc/init.d/homebridge
 	sudo update-rc.d homebridge defaults
