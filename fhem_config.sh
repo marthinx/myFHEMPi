@@ -62,6 +62,10 @@ do_show_menu() {
             echo "you chose timesync"
             do_timesync
             ;;
+        "FHEM_NAS_Backup")
+            echo "you chose FHEM_NAS_Backup"
+            do_FHEM_NAS_Backup
+            ;;
         "addons")
             echo "you chose addons"
             do_install_addons
@@ -311,6 +315,162 @@ do_setIP() {
     sudo ifconfig eth0 down
     sudo ifconfig eth0 192.168.188.10
     sudo ifconfig eth0 up
+}
+
+do_FHEM_NAS_Backup() {
+    sudo echo "fhem ALL=(ALL) NOPASSWD:/opt/fhem/FHEM/backup.sh" >> /etc/sudoers
+    sudo apt-get update && sudo dpkg --configure -a && sudo apt-get -f install && sudo apt-get -y install cifs-utils curl libcurl3
+    sudo touch /opt/fhem/FHEM/backup.sh && sudo chmod 700 /opt/fhem/FHEM/backup.sh && sudo chown -R fhem:root /opt/fhem/FHEM/backup.sh
+
+
+ echo '#!/bin/bash
+ 
+mountIp="192.168.3.10"
+mountDir="backup"
+mountUser="admin"
+mountPass="password"
+mountSubDir="rpi/fhem"
+localMountPoint="/Q/backup"
+ 
+#optional
+backupsMax="0"
+localBackupDir="/backup"
+pushoverUser=""
+pushoverToken=""
+###################################
+ 
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup info backup starting now"
+ 
+if [ ! -e "$localBackupDir" ]
+then
+echo "$localBackupDir wird erstellt"
+mkdir -p "$localBackupDir"
+else
+echo "$localBackupDir bereits vorhanden"
+fi
+ 
+tar --exclude=backup -cvzf "/$localBackupDir/$(date +%y%m%d_%H%M%S)_fhem_backup.tar.gz" "/opt/fhem" &>/dev/null
+ 
+if ! ping -c 1 $mountIp
+then
+echo "$mountIp nicht erreichbar, stop"
+perl /opt/fhem/fhem.pl 7072 "set FHEM.Backup error"
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup info $mountIp not found"
+exit
+else
+echo "$mountIp erreichbar"
+fi
+ 
+localIp=$(hostname -I|sed 's/\([0-9.]*\).*/\1/')
+ 
+if [ ! -e "$localMountPoint" ]
+then
+echo "$localMountPoint wird erstellt"
+mkdir -p "$localMountPoint"
+else
+echo "$localMountPoint bereits vorhanden"
+fi
+ 
+if [ "$(ls -A $localMountPoint)" ]
+then
+echo "$localMountPoint nicht leer, kein Mounten notwendig"
+else
+echo "$localMountPoint leer, Mounten starten"
+vorhanden="0"
+while read line
+do
+mountComplete="//$mountIp/$mountDir $localMountPoint cifs username=$mountUser,password=$mountPass,iocharset=utf8,sec=ntlm 0 0"
+echo "mountComplete: $mountComplete"
+if [ `echo "$line" | grep -c "$mountComplete"` != 0 ]
+then
+echo "/etc/fstab: Eintrag bereits vorhanden: $mountComplete"
+vorhanden="1"
+break
+fi
+done < "/etc/fstab"
+if [ "$vorhanden" != "1" ]
+then
+echo "/etc/fstab: Eintrag wird ergänzt: $mountComplete"
+echo "$mountComplete" >> "/etc/fstab"
+fi
+echo "Mounts werden aktualisiert"
+mount -a
+sleep 3
+fi
+ 
+if [ "$(ls -A $localMountPoint)" ]
+then
+if [ ! -e "$localMountPoint/$mountSubDir/$localIp" ]
+then
+mkdir -p "$localMountPoint/$mountSubDir/$localIp"
+else
+echo "$localMountPoint/$mountSubDir/$localIp existiert bereits"
+fi
+find "$localBackupDir" -name '*fhem_backup.tar.gz' | while read file
+do
+fileSize="0"
+fileSizeMB=$(du -h $file)
+fileSizeMB=${fileSizeMB%%M*}
+filename=${file##*/}
+echo "$filename ($fileSizeMB MB) wird in den Backupordner verschoben"
+if [[ "$pushoverToken" != "" && "pushoverUser" != "" ]]
+then
+curl -s -F "token=$pushoverToken" -F "user=$pushoverUser" -F "title=FHEM $localIp" -F "message=Backup mit $fileSizeMB MB wird erstellt" https://api.pushover.net/1/messages.json
+fi
+#mv "$file" "$localMountPoint/$mountSubDir/$localIp/$filename"
+cp "$file" "$localMountPoint/$mountSubDir/$localIp/$filename"
+rm "$file"
+perl /opt/fhem/fhem.pl 7072 "set FHEM.Backup off"
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup backup $filename"
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup backupMB $fileSizeMB"
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup info backup done"
+done
+else
+echo "Mounten hat anscheinend nicht geklappt, skip."
+exit
+fi
+ 
+#Löschen alter Backups
+if [[ "$backupsMax" != "" && "$backupsMax" != "0" ]]
+then
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup backupFilesMax $backupsMax"
+backupsCurrent=`ls -A "$localMountPoint/$mountSubDir/$localIp" | grep -c "_fhem_backup.tar.gz"`
+backupsDelete=$(($backupsCurrent-$backupsMax))
+if [ "$backupsDelete" -gt "0" ]
+then
+echo "$backupsCurrent Backups vorhanden - nur $backupsMax aktuelle Backups werden vorgehalten - $backupsDelete Backups werden gelöscht"
+ls -d "/$localMountPoint/$mountSubDir/$localIp/"* | grep "_fhem_backup.tar.gz" | head -$backupsDelete | xargs rm
+else
+echo "$backupsCurrent Backups vorhanden - bis $backupsMax aktuelle Backups werden vorgehalten"
+fi
+else
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup backupFilesMax no limit"
+fi
+ 
+backupsCurrent=`ls -A "$localMountPoint/$mountSubDir/$localIp" | grep -c "_fhem_backup.tar.gz"`
+perl /opt/fhem/fhem.pl 7072 "setreading FHEM.Backup backupFiles $backupsCurrent"
+ 
+ 
+echo "Mount wieder unmounten"
+umount "$localMountPoint"
+
+
+' >> /opt/fhem/FHEM/backup.sh
+
+# fhem.cfg anpassen
+ sudo echo '#dummy FHEM.Backup
+define FHEM.Backup dummy
+attr FHEM.Backup event-on-change-reading state
+attr FHEM.Backup room FHEM
+attr FHEM.Backup webCmd on:off
+define FHEMBackupOn notify FHEM.Backup:on {system ("sudo -u root /opt/fhem/FHEM/backup.sh &")}
+ 
+#Automatisches Backup um 06:00 Uhr starten
+define FHEMBackup at *06:00:00 set FHEM.Backup on
+' >> /opt/fhemcfg
+
+
+   echo "editierbar mit: http://192.168.3.97:8083/fhem?cmd=style%20edit%20backup.sh"
 }
 
 do_install_addons() {
