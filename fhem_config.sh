@@ -44,7 +44,7 @@ do_show_menu() {
     # Bash Menu Script Example
 
     PS3='Please enter your choice: '
-    options=("apt-get_update" "install FHEM" "Siri" "timesync" "addons" "checkin" "checkout" "install_myFHEM" "Quit")
+    options=("apt-get_update" "install FHEM" "Siri" "timesync" "FHEM_NAS_Backup" "addons" "checkin" "checkout" "install_myFHEM" "Quit")
     select opt in "${options[@]}"
     do
     case $opt in
@@ -318,6 +318,10 @@ do_setIP() {
 }
 
 do_FHEM_NAS_Backup() {
+if [ "$(cat /etc/sudoers)" = "fhem ALL=(ALL) NOPASSWD:/opt/fhem/FHEM/backup.sh" ];
+then
+   echo "Berechtigung besteht bereits"
+fi
     sudo echo "fhem ALL=(ALL) NOPASSWD:/opt/fhem/FHEM/backup.sh" >> /etc/sudoers
     sudo apt-get update && sudo dpkg --configure -a && sudo apt-get -f install && sudo apt-get -y install cifs-utils curl libcurl3
     sudo touch /opt/fhem/FHEM/backup.sh && sudo chmod 700 /opt/fhem/FHEM/backup.sh && sudo chown -R fhem:root /opt/fhem/FHEM/backup.sh
